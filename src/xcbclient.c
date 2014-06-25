@@ -384,51 +384,72 @@ NestedClientUpdateScreen(NestedClientPrivatePtr pPriv, int16_t x1,
 
 void
 NestedClientCheckEvents(NestedClientPrivatePtr pPriv) {
-    XEvent ev;
+    xcb_generic_event_t *ev;
+    xcb_expose_event_t *xev;
+    xcb_motion_notify_event_t *mev;
+    xcb_button_press_event_t *bev;
+    xcb_key_press_event_t *kev;
 
-    while(XCheckMaskEvent(pPriv->display, ~0, &ev)) {
-        switch (ev.type) {
-        case Expose:
+    while ((ev = xcb_poll_for_event(pPriv->connection))) {
+        switch (ev->response_type & ~0x80) {
+        case XCB_EXPOSE:
+            xev = (xcb_expose_event_t *)ev;
             NestedClientUpdateScreen(pPriv,
-                                     ((XExposeEvent*)&ev)->x,
-                                     ((XExposeEvent*)&ev)->y,
-                                     ((XExposeEvent*)&ev)->x + 
-                                     ((XExposeEvent*)&ev)->width,
-                                     ((XExposeEvent*)&ev)->y + 
-                                     ((XExposeEvent*)&ev)->height);
+                                     xev->x,
+                                     xev->y,
+                                     xev->x + xev->width,
+                                     xev->y + xev->height);
             break;
-
-        case MotionNotify:
+        case XCB_MOTION_NOTIFY:
             if (!pPriv->dev) {
                 xf86DrvMsg(pPriv->scrnIndex, X_INFO, "Input device is not yet initialized, ignoring input.\n");
                 break;
             }
 
+            mev = (xcb_motion_notify_event_t *)ev;
             NestedInputPostMouseMotionEvent(pPriv->dev,
-                                            ((XMotionEvent*)&ev)->x,
-                                            ((XMotionEvent*)&ev)->y);
+                                            mev->event_x,
+                                            mev->event_y);
             break;
-
-        case ButtonPress:
-        case ButtonRelease:
+        case XCB_KEY_PRESS:
             if (!pPriv->dev) {
                 xf86DrvMsg(pPriv->scrnIndex, X_INFO, "Input device is not yet initialized, ignoring input.\n");
                 break;
             }
 
-            NestedInputPostButtonEvent(pPriv->dev, ev.xbutton.button, ev.type == ButtonPress);
+            kev = (xcb_key_press_event_t *)ev;
+            NestedInputPostKeyboardEvent(pPriv->dev, kev->detail, TRUE);
             break;
-
-        case KeyPress:
-        case KeyRelease:
+        case XCB_KEY_RELEASE:
             if (!pPriv->dev) {
                 xf86DrvMsg(pPriv->scrnIndex, X_INFO, "Input device is not yet initialized, ignoring input.\n");
                 break;
             }
 
-            NestedInputPostKeyboardEvent(pPriv->dev, ev.xkey.keycode, ev.type == KeyPress);
+            kev = (xcb_key_press_event_t *)ev;
+            NestedInputPostKeyboardEvent(pPriv->dev, kev->detail, FALSE);
+            break;
+        case XCB_BUTTON_PRESS:
+            if (!pPriv->dev) {
+                xf86DrvMsg(pPriv->scrnIndex, X_INFO, "Input device is not yet initialized, ignoring input.\n");
+                break;
+            }
+
+            bev = (xcb_button_press_event_t *)ev;
+            NestedInputPostButtonEvent(pPriv->dev, bev->detail, TRUE);
+            break;
+        case XCB_BUTTON_RELEASE:
+            if (!pPriv->dev) {
+                xf86DrvMsg(pPriv->scrnIndex, X_INFO, "Input device is not yet initialized, ignoring input.\n");
+                break;
+            }
+
+            bev = (xcb_button_press_event_t *)ev;
+            NestedInputPostButtonEvent(pPriv->dev, bev->detail, FALSE);
             break;
         }
+
+        free(ev);
     }
 }
 
