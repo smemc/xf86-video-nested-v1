@@ -475,28 +475,46 @@ NestedClientGetFileDescriptor(NestedClientPrivatePtr pPriv) {
 }
 
 Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr keySyms, CARD8 *modmap, XkbControlsPtr ctrls) {
-    XModifierKeymap *modifier_keymap;
-    KeySym *keymap;
     int mapWidth;
     int min_keycode, max_keycode;
     int i, j;
     XkbDescPtr xkb;
+    xcb_keysym_t *keymap;
+    xcb_keycode_t *modifiermap;
+    xcb_get_keyboard_mapping_cookie_t mapping_c;
+    xcb_get_keyboard_mapping_reply_t *mapping_r;
+    xcb_get_keyboard_modifier_cookie_t modifier_c;
+    xcb_get_keyboard_modifier_reply_t *modifier_r;
 
-    XDisplayKeycodes(pPriv->display, &min_keycode, &max_keycode);
-    keymap = XGetKeyboardMapping(pPriv->display,
-                                 min_keycode,
-                                 max_keycode - min_keycode + 1,
-                                 &mapWidth);
+    min_keycode = xcb_get_setup(pPriv->connection)->min_keycode;
+    max_keycode = xcb_get_setup(pPriv->connection)->max_keycode;
 
+    mapping_c = xcb_get_keyboard_mapping(pPriv->connection,
+                                         min_keycode,
+                                         max_keycode - min_keycode + 1);
+    mapping_r = xcb_get_keyboard_mapping_reply(pPriv->connection,
+                                               mapping_c,
+                                               NULL);
+    mapWidth = mapping_r->keysyms_per_keycode;
+    keymap = xcb_get_keyboard_mapping_keysyms(mapping_r);
+    free(mapping_r);
+
+    modifier_c = xcb_get_keyboard_modifier(pPriv->connection);
+    modifier_r = xcb_get_keyboard_modifier_reply(pPriv->connection,
+                                                modifier_c,
+                                                NULL);
+    modifiermap = xcb_get_modifier_mapping_keycodes(modifier_r);
     memset(modmap, 0, sizeof(CARD8) * MAP_LENGTH);
-    modifier_keymap = XGetModifierMapping(pPriv->display);
+
     for (j = 0; j < 8; j++)
-        for(i = 0; i < modifier_keymap->max_keypermod; i++) {
+        for (i = 0; i < modifier_r->keycodes_per_modifier; i++) {
             CARD8 keycode;
-            if ((keycode = modifier_keymap->modifiermap[j * modifier_keymap->max_keypermod + i]))
-                modmap[keycode] |= 1<<j;
+
+            if ((keycode = modifiermap[j * modifier_r->keycodes_per_modifier + i]))
+                modmap[keycode] |= 1 << j;
     }
-    XFreeModifiermap(modifier_keymap);
+
+    free(modifier_r);
 
     keySyms->minKeyCode = min_keycode;
     keySyms->maxKeyCode = max_keycode;
