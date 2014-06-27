@@ -38,10 +38,14 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <X11/Xlib-xcb.h>
 #include <X11/XKBlib.h>
-#include <X11/extensions/XShm.h>
+
+#include <xcb/xcb_aux.h>
+#include <xcb/xcb_icccm.h>
+#include <xcb/xcb_image.h>
+#include <xcb/shm.h>
+#include <xcb/xkb.h>
 
 #include <xorg-server.h>
 #include <xf86.h>
