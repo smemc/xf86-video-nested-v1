@@ -362,7 +362,7 @@ NestedClientUpdateScreen(NestedClientPrivatePtr pPriv, int16_t x1,
                           pPriv->shminfo,
                           x1, y1, x1, y1, x2 - x1, y2 - y1, FALSE);
     } else {
-        xcb_image_put(pPriv->display, pPriv->window, pPriv->gc, pPriv->img,
+        xcb_image_put(pPriv->connection, pPriv->window, pPriv->gc, pPriv->img,
                       x1, y1, 0);
     }
 
