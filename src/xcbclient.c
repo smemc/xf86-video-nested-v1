@@ -62,7 +62,7 @@ struct NestedClientPrivate {
     Display *display;
     xcb_connection_t *connection;
     int screenNumber;
-    xcb_visualtype_t visual;
+    xcb_visualtype_t *visual;
     xcb_screen_t *screen;
     xcb_window_t rootWindow;
     xcb_window_t window;
