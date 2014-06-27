@@ -208,7 +208,7 @@ NestedClientCreateScreen(int scrnIndex,
     pPriv->screenNumber = DefaultScreen(pPriv->display);
     pPriv->connection = XGetXCBConnection(pPriv->display);
 
-    if (xcb_connection_has_error(pPriv->connection)
+    if (xcb_connection_has_error(pPriv->connection))
         return NULL;
 
     xkb_rep = xcb_get_extension_data(pPriv->connection, &xcb_xkb_id);
