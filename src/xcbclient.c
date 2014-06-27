@@ -113,7 +113,7 @@ NestedClientTryXShm(NestedClientPrivatePtr pPriv, int scrnIndex, int width, int 
 
     shm_version_c = xcb_shm_query_version(pPriv->connection);
     shm_version_r = xcb_shm_query_version_reply(pPriv->connection,
-                                                shm_version_c, e);
+                                                shm_version_c, &e);
 
     if (e) {
         xf86DrvMsg(scrnIndex, X_INFO, "XShm extension version query failed. Dropping XShm support.\n");
