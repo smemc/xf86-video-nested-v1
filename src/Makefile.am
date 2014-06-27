@@ -18,14 +18,15 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 #
-# Author: Paulo Zanoni <pzanoni@mandriva.com>
+# Authors: Paulo Zanoni <pzanoni@mandriva.com>
+#          Laércio de Sousa <laerciosousa@sme-mogidascruzes.sp.gov.br>
 #
 
-AM_CFLAGS = $(XORG_CFLAGS) $(PCIACCESS_CFLAGS) $(X11_CFLAGS) $(XEXT_CFLAGS)
+AM_CFLAGS = $(XORG_CFLAGS) $(PCIACCESS_CFLAGS) $(X11_CFLAGS) $(XCB_CFLAGS)
 
 nested_drv_la_LTLIBRARIES = nested_drv.la
 nested_drv_la_LDFLAGS = -module -avoid-version
-nested_drv_la_LIBADD = $(XORG_LIBS) $(X11_LIBS) $(XEXT_LIBS)
+nested_drv_la_LIBADD = $(XORG_LIBS) $(X11_LIBS) $(XCB_LIBS)
 nested_drv_ladir = @moduledir@/drivers
 
 nested_drv_la_SOURCES = driver.c nested_input.c nested_input.h xlibclient.c client.h compat-api.h

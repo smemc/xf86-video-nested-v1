@@ -1,4 +1,5 @@
 #  Copyright 2005 Adam Jackson.
+#            2014 Prefeitura de Mogi das Cruzes, SP, Brazil
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a
 #  copy of this software and associated documentation files (the "Software"),
@@ -18,11 +19,13 @@
 #  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
+#  Author: Laércio de Sousa <laerciosousa@sme-mogidascruzes.sp.gov.br>
+#
 # Process this file with autoconf to produce a configure script
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([xf86-video-nestedy],
+AC_INIT([xf86-video-nested],
         [0.1.0],
         [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],
         [xf86-video-nested])
@@ -59,7 +62,7 @@ PKG_CHECK_MODULES(XORG, xorg-server xproto $REQUIRED_MODULES)
 
 # Checks for libraries.
 PKG_CHECK_MODULES(X11, x11)
-PKG_CHECK_MODULES(XEXT, xext)
+PKG_CHECK_MODULES(XCB, xcb xcb-aux xcb-icccm xcb-image xcb-shm xcb-xkb)
 
 DRIVER_NAME=nested
 AC_SUBST([DRIVER_NAME])
