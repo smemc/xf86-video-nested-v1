@@ -95,8 +95,8 @@ NestedClientValidDepth(int depth) {
 
 static Bool
 NestedClientTryXShm(NestedClientPrivatePtr pPriv, int scrnIndex, int width, int height, int depth) {
+    const xcb_query_extension_reply_t *shm_rep;
     xcb_generic_error_t *e;
-    xcb_query_extension_reply_t *shm_rep;
     xcb_shm_query_version_cookie_t shm_version_c;
     xcb_shm_query_version_reply_t *shm_version_r;
 
@@ -183,8 +183,8 @@ NestedClientCreateScreen(int scrnIndex,
                          uint32_t *retGreenMask,
                          uint32_t *retBlueMask) {
     NestedClientPrivatePtr pPriv;
+    const xcb_query_extension_reply_t *xkb_rep;
     xcb_size_hints_t sizeHints;
-    xcb_query_extension_reply_t *xkb_rep;
     char windowTitle[32];
     uint32_t attr;
 
