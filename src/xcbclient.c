@@ -506,7 +506,7 @@ Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr ke
     keySyms->minKeyCode = min_keycode;
     keySyms->maxKeyCode = max_keycode;
     keySyms->mapWidth = mapWidth;
-    keySyms->map = keymap;
+    keySyms->map = (KeySym *)keymap;
 
     xkb = XkbGetKeyboard(pPriv->display, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
     if (xkb == NULL || xkb->geom == NULL) {
