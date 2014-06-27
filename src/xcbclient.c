@@ -54,36 +54,22 @@
 
 #include "nested_input.h"
 
-typedef struct _NestedClientPrivate {
+struct NestedClientPrivate {
     Display *display;
     xcb_connection_t *connection;
     int screenNumber;
     xcb_visualtype_t visual;
-    /* Screen *screen; */
     xcb_screen_t *screen;
-    /* Window rootWindow; */
     xcb_window_t rootWindow;
-    /* Window window; */
     xcb_window_t window;
-    /* XImage *img; */
     xcb_image_t *img;
-    /* GC gc; */
     xcb_gcontext_t gc;
     Bool usingShm;
-    /* XShmSegmentInfo shminfo; */
     xcb_shm_segment_info_t shminfo;
     int scrnIndex; /* stored only for xf86DrvMsg usage */
     DeviceIntPtr dev; // The pointer to the input device.  Passed back to the
                       // input driver when posting input events.
-
-    struct {
-        int op;
-        int event;
-        int error;
-        int major;
-        int minor;
-    } xkb;
-} NestedClientPrivate;
+};
 
 /* Checks if a display is open */
 Bool
