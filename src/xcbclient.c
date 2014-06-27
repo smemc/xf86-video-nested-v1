@@ -470,8 +470,8 @@ Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr ke
     xcb_keycode_t *modifiermap;
     xcb_get_keyboard_mapping_cookie_t mapping_c;
     xcb_get_keyboard_mapping_reply_t *mapping_r;
-    xcb_get_keyboard_modifier_cookie_t modifier_c;
-    xcb_get_keyboard_modifier_reply_t *modifier_r;
+    xcb_get_modifier_mapping_cookie_t modifier_c;
+    xcb_get_modifier_mapping_reply_t *modifier_r;
 
     min_keycode = xcb_get_setup(pPriv->connection)->min_keycode;
     max_keycode = xcb_get_setup(pPriv->connection)->max_keycode;
@@ -486,8 +486,8 @@ Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr ke
     keymap = xcb_get_keyboard_mapping_keysyms(mapping_r);
     free(mapping_r);
 
-    modifier_c = xcb_get_keyboard_modifier(pPriv->connection);
-    modifier_r = xcb_get_keyboard_modifier_reply(pPriv->connection,
+    modifier_c = xcb_get_modifier_mapping(pPriv->connection);
+    modifier_r = xcb_get_modifier_mapping_reply(pPriv->connection,
                                                 modifier_c,
                                                 NULL);
     modifiermap = xcb_get_modifier_mapping_keycodes(modifier_r);
