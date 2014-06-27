@@ -55,12 +55,14 @@
 #include "nested_input.h"
 
 typedef struct _NestedClientPrivate {
-    /* Display *display; */
+    Display *display;
     xcb_connection_t *connection;
     int screenNumber;
     xcb_visualtype_t visual;
     /* Screen *screen; */
+    xcb_screen_t *screen;
     /* Window rootWindow; */
+    xcb_window_t rootWindow;
     /* Window window; */
     xcb_window_t window;
     /* XImage *img; */
@@ -71,9 +73,6 @@ typedef struct _NestedClientPrivate {
     /* XShmSegmentInfo shminfo; */
     xcb_shm_segment_info_t shminfo;
     int scrnIndex; /* stored only for xf86DrvMsg usage */
-    Cursor mycursor; /* Test cursor */
-    Pixmap bitmapNoData;
-    XColor color1;
     DeviceIntPtr dev; // The pointer to the input device.  Passed back to the
                       // input driver when posting input events.
 
@@ -215,7 +214,9 @@ NestedClientCreateScreen(int scrnIndex,
     pPriv = malloc(sizeof(struct NestedClientPrivate));
     pPriv->scrnIndex = scrnIndex;
 
-    pPriv->connection = xcb_connect(displayName, &pPriv->screenNumber);
+    pPriv->display = XOpenDisplay(displayName);
+    pPriv->screenNumber = DefaultScreen(pPriv->display);
+    pPriv->connection = XGetXCBConnection(displayName);
 
     if (xcb_connection_has_error(pPriv->connection)
         return NULL;
@@ -224,7 +225,7 @@ NestedClientCreateScreen(int scrnIndex,
                                   &pPriv->xkb.error, &pPriv->xkb.major, &pPriv->xkb.minor);
     if (!supported) {
         xf86DrvMsg(pPriv->scrnIndex, X_ERROR, "Host X server does not support the XKEYBOARD extension.\n");
-        xcb_disconnect(pPriv->connection);
+        XCloseDisplay(pPriv->display);
         return NULL;
     }
 
@@ -461,7 +462,7 @@ NestedClientCloseScreen(NestedClientPrivatePtr pPriv) {
     }
 
     xcb_image_destroy(pPriv->img);
-    xcb_disconnect(pPriv->connection);
+    XCloseDisplay(pPriv->display);
 }
 
 void
