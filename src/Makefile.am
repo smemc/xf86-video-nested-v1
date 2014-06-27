@@ -29,4 +29,4 @@ nested_drv_la_LDFLAGS = -module -avoid-version
 nested_drv_la_LIBADD = $(XORG_LIBS) $(X11_LIBS) $(XCB_LIBS)
 nested_drv_ladir = @moduledir@/drivers
 
-nested_drv_la_SOURCES = driver.c nested_input.c nested_input.h xlibclient.c client.h compat-api.h
+nested_drv_la_SOURCES = driver.c nested_input.c nested_input.h xcbclient.c client.h compat-api.h
