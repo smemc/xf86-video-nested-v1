@@ -206,7 +206,7 @@ NestedClientCreateScreen(int scrnIndex,
 
     pPriv->display = XOpenDisplay(displayName);
     pPriv->screenNumber = DefaultScreen(pPriv->display);
-    pPriv->connection = XGetXCBConnection(displayName);
+    pPriv->connection = XGetXCBConnection(pPriv->display);
 
     if (xcb_connection_has_error(pPriv->connection)
         return NULL;
