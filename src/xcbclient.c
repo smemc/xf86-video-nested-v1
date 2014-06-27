@@ -198,7 +198,7 @@ NestedClientCreateScreen(int scrnIndex,
                          uint32_t *retBlueMask) {
     NestedClientPrivatePtr pPriv;
     xcb_size_hints_t sizeHints;
-    Bool supported;
+    xcb_query_extension_reply_t *xkb_rep;
     char windowTitle[32];
     uint32_t attr;
 
@@ -221,9 +221,9 @@ NestedClientCreateScreen(int scrnIndex,
     if (xcb_connection_has_error(pPriv->connection)
         return NULL;
 
-    supported = XkbQueryExtension(pPriv->display, &pPriv->xkb.op, &pPriv->xkb.event,
-                                  &pPriv->xkb.error, &pPriv->xkb.major, &pPriv->xkb.minor);
-    if (!supported) {
+    xkb_rep = xcb_get_extension_data(pPriv->connection, &xcb_xkb_id);
+
+    if (!xkb_rep || !xkb_rep->present) {
         xf86DrvMsg(pPriv->scrnIndex, X_ERROR, "Host X server does not support the XKEYBOARD extension.\n");
         XCloseDisplay(pPriv->display);
         return NULL;
