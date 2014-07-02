@@ -300,15 +300,14 @@ NestedClientCreateScreen(int scrnIndex,
 
     NestedClientHideCursor(pPriv); /* Hide cursor */
 
-#if 0
+#if 1
 xf86DrvMsg(scrnIndex, X_INFO, "width: %d\n", pPriv->img->width);
 xf86DrvMsg(scrnIndex, X_INFO, "height: %d\n", pPriv->img->height);
-xf86DrvMsg(scrnIndex, X_INFO, "xoffset: %d\n", pPriv->img->xoffset);
 xf86DrvMsg(scrnIndex, X_INFO, "depth: %d\n", pPriv->img->depth);
-xf86DrvMsg(scrnIndex, X_INFO, "bpp: %d\n", pPriv->img->bits_per_pixel);
-xf86DrvMsg(scrnIndex, X_INFO, "red_mask: 0x%lx\n", pPriv->img->red_mask);
-xf86DrvMsg(scrnIndex, X_INFO, "gre_mask: 0x%lx\n", pPriv->img->green_mask);
-xf86DrvMsg(scrnIndex, X_INFO, "blu_mask: 0x%lx\n", pPriv->img->blue_mask);
+xf86DrvMsg(scrnIndex, X_INFO, "bpp: %d\n", pPriv->img->bpp);
+xf86DrvMsg(scrnIndex, X_INFO, "red_mask: 0x%x\n", pPriv->visual->red_mask);
+xf86DrvMsg(scrnIndex, X_INFO, "gre_mask: 0x%x\n", pPriv->visual->green_mask);
+xf86DrvMsg(scrnIndex, X_INFO, "blu_mask: 0x%x\n", pPriv->visual->blue_mask);
 #endif
 
     *retRedMask = pPriv->visual->red_mask;
