@@ -203,10 +203,13 @@ NestedClientCreateScreen(int scrnIndex,
 
     pPriv = malloc(sizeof(struct NestedClientPrivate));
     pPriv->scrnIndex = scrnIndex;
-
+    
+    /* XXX: Get rid of pPriv->display as soon as we can
+     * port all XKB related calls to XCB. */
     pPriv->display = XOpenDisplay(displayName);
     pPriv->screenNumber = DefaultScreen(pPriv->display);
     pPriv->connection = XGetXCBConnection(pPriv->display);
+    XSetEventQueueOwner(pPriv->display, XCBOwnsEventQueue);
 
     if (xcb_connection_has_error(pPriv->connection))
         return NULL;
