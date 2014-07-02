@@ -232,6 +232,7 @@ NestedClientCreateScreen(int scrnIndex,
                   pPriv->rootWindow,
                   0, NULL);
 
+    pPriv->window = xcb_generate_id(pPriv->connection);
     xcb_create_window(pPriv->connection,
                       XCB_COPY_FROM_PARENT,
                       pPriv->window,
