@@ -375,7 +375,16 @@ NestedClientCheckEvents(NestedClientPrivatePtr pPriv) {
     xcb_button_press_event_t *bev;
     xcb_key_press_event_t *kev;
 
-    while ((ev = xcb_poll_for_event(pPriv->connection))) {
+    while (TRUE) {
+        ev = xcb_poll_for_event(pPriv->connection);
+
+        if (!ev) {
+            if (xcb_connection_has_error(pPriv->connection))
+                exit(1);
+
+            break;
+        }
+
         switch (ev->response_type & ~0x80) {
         case XCB_EXPOSE:
             xev = (xcb_expose_event_t *)ev;
