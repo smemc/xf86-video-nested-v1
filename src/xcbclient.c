@@ -314,17 +314,8 @@ xf86DrvMsg(scrnIndex, X_INFO, "blu_mask: 0x%x\n", pPriv->visual->blue_mask);
     *retGreenMask = pPriv->visual->green_mask;
     *retBlueMask = pPriv->visual->blue_mask;
 
-    xcb_generic_event_t *ev;
-
-    while ((ev = xcb_wait_for_event(pPriv->connection))) {
-        switch (ev->response_type & ~0x80) {
-        case XCB_EXPOSE:
-            break;
-        }
-    }
-   
     pPriv->dev = (DeviceIntPtr)NULL;
- 
+
     return pPriv;
 }
 
