@@ -472,6 +472,7 @@ Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr ke
     int mapWidth;
     int min_keycode, max_keycode;
     int i, j;
+    int keymap_len;
     XkbDescPtr xkb;
     xcb_keysym_t *keymap;
     xcb_keycode_t *modifiermap;
@@ -491,7 +492,7 @@ Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr ke
                                                NULL);
     mapWidth = mapping_r->keysyms_per_keycode;
     keymap = xcb_get_keyboard_mapping_keysyms(mapping_r);
-    free(mapping_r);
+    keymap_len = xcb_get_keyboard_mapping_keysyms_length(mapping_r);
 
     modifier_c = xcb_get_modifier_mapping(pPriv->connection);
     modifier_r = xcb_get_modifier_mapping_reply(pPriv->connection,
@@ -513,18 +514,22 @@ Bool NestedClientGetKeyboardMappings(NestedClientPrivatePtr pPriv, KeySymsPtr ke
     keySyms->minKeyCode = min_keycode;
     keySyms->maxKeyCode = max_keycode;
     keySyms->mapWidth = mapWidth;
-    keySyms->map = (KeySym *)keymap;
+    keySyms->map = calloc(keymap_len, sizeof(KeySym));
+
+    for (i = 0; i < keymap_len; i++)
+        keySyms->map[i] = keymap[i];
+
+    free(mapping_r);
+
 
     xkb = XkbGetKeyboard(pPriv->display, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
     if (xkb == NULL || xkb->geom == NULL) {
         xf86DrvMsg(pPriv->scrnIndex, X_ERROR, "Couldn't get XKB keyboard.\n");
-        free(keymap);
         return FALSE;
     }
 
     if(XkbGetControls(pPriv->display, XkbAllControlsMask, xkb) != Success) {
         xf86DrvMsg(pPriv->scrnIndex, X_ERROR, "Couldn't get XKB keyboard controls.\n");
-        free(keymap);
         return FALSE;
     }
 
