@@ -50,9 +50,9 @@ NestedClientPrivatePtr NestedClientCreateScreen(int    scrnIndex,
                                                 int    originY,
                                                 int    depth,
                                                 int    bitsPerPixel,
-                                                Pixel *retRedMask,
-                                                Pixel *retGreenMask,
-                                                Pixel *retBlueMask);
+                                                uint32_t *retRedMask,
+                                                uint32_t *retGreenMask,
+                                                uint32_t *retBlueMask);
 
 char *NestedClientGetFrameBuffer(NestedClientPrivatePtr pPriv);
 
