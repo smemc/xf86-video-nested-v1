@@ -350,7 +350,7 @@ static Bool NestedPreInit(ScrnInfoPtr pScrn, int flags) {
         pNested->displayName = NULL;
     }
 
-    if (xf86IsOptionSet(NestedOptions, OPTION_DISPLAY)) {
+    if (xf86IsOptionSet(NestedOptions, OPTION_XAUTHORITY)) {
         pNested->xauthority = xf86GetOptValString(NestedOptions,
                                                   OPTION_XAUTHORITY);
         xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Using Xauthority file \"%s\"\n",
