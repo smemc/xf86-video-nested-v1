@@ -95,6 +95,7 @@ void NestedPrintMode(ScrnInfoPtr p, DisplayModePtr m);
 
 typedef enum {
     OPTION_DISPLAY,
+    OPTION_XAUTHORITY,
     OPTION_ORIGIN
 } NestedOpts;
 
@@ -112,6 +113,7 @@ static SymTabRec NestedChipsets[] = {
  * custom options */
 static OptionInfoRec NestedOptions[] = {
     { OPTION_DISPLAY, "Display", OPTV_STRING, {0}, FALSE },
+    { OPTION_XAUTHORITY, "Xauthority", OPTV_STRING, {0}, FALSE },
     { OPTION_ORIGIN,  "Origin",  OPTV_STRING, {0}, FALSE },
     { -1,             NULL,      OPTV_NONE,   {0}, FALSE }
 };
@@ -163,6 +165,7 @@ _X_EXPORT XF86ModuleData nestedModuleData = {
 /* These stuff should be valid to all server generations */
 typedef struct NestedPrivate {
     char                        *displayName;
+    char                        *xauthority;
     int                          originX;
     int                          originY;
     NestedClientPrivatePtr       clientData;
@@ -342,6 +345,17 @@ static Bool NestedPreInit(ScrnInfoPtr pScrn, int flags) {
                                                    OPTION_DISPLAY);
         xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Using display \"%s\"\n",
                    pNested->displayName);
+        setenv("DISPLAY", pNested->displayName, 1);
+    } else {
+        pNested->displayName = NULL;
+    }
+
+    if (xf86IsOptionSet(NestedOptions, OPTION_DISPLAY)) {
+        pNested->xauthority = xf86GetOptValString(NestedOptions,
+                                                  OPTION_XAUTHORITY);
+        xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Using Xauthority file \"%s\"\n",
+                   pNested->xauthority);
+        setenv("XAUTHORITY", pNested->xauthority, 1);
     } else {
         pNested->displayName = NULL;
     }
@@ -363,7 +377,7 @@ static Bool NestedPreInit(ScrnInfoPtr pScrn, int flags) {
 
     xf86ShowUnusedOptions(pScrn->scrnIndex, pScrn->options);
 
-    if (!NestedClientCheckDisplay(pNested->displayName)) {
+    if (!NestedClientCheckDisplay(NULL)) {
         xf86DrvMsg(pScrn->scrnIndex, X_ERROR, "Can't open display: %s\n",
                    pNested->displayName);
         return FALSE;
@@ -561,7 +575,7 @@ static Bool NestedScreenInit(SCREEN_INIT_ARGS_DECL)
     //Load_Nested_Mouse();
 
     pNested->clientData = NestedClientCreateScreen(pScrn->scrnIndex,
-                                                   pNested->displayName,
+                                                   NULL,
                                                    pScrn->virtualX,
                                                    pScrn->virtualY,
                                                    pNested->originX,
